@@ -163,10 +163,10 @@ PBWT *pbwtReadVcfGT (char *filename)  /* read GTs from vcf/bcf using htslib */
   free (x) ; pbwtCursorDestroy (u) ;  
   free (xMissing) ;
 
-  fprintf (logFile, "read genotypes from %s with %ld sample names and %ld sites on chromosome %s: M, N are %d, %d\n", 
-         filename, arrayMax(p->samples)/2, arrayMax(p->sites), p->chrom, p->M, p->N) ;
-  if (p->missingOffset) fprintf (logFile, "%ld missing values at %d sites\n", 
-         nMissing, nMissingSites) ;
+  // fprintf (logFile, "read genotypes from %s with %ld sample names and %ld sites on chromosome %s: M, N are %d, %d\n", 
+  //        filename, arrayMax(p->samples)/2, arrayMax(p->sites), p->chrom, p->M, p->N) ;
+  // if (p->missingOffset) fprintf (logFile, "%ld missing values at %d sites\n", 
+  //        nMissing, nMissingSites) ;
 
   return p ;
 }
@@ -243,7 +243,7 @@ void pbwtWriteVcf (PBWT *p, char *filename, char *referenceFasta, char *mode)
   if (!fp) die ("could not open file for writing: %s", filename) ;
   if (!p) die ("pbwtWriteVcf called without a valid pbwt") ;
   if (!p->sites) die ("pbwtWriteVcf called without sites") ;
-  if (!p->samples) fprintf (logFile, "Warning: pbwtWriteVcf called without samples... using fake sample names PBWT0, PBWT1 etc...\n") ;
+  // if (!p->samples) fprintf (logFile, "Warning: pbwtWriteVcf called without samples... using fake sample names PBWT0, PBWT1 etc...\n") ;
   BOOL isDosage = p->dosageOffset ? TRUE : FALSE ;
 
   // write header
@@ -260,11 +260,11 @@ void pbwtWriteVcf (PBWT *p, char *filename, char *referenceFasta, char *mode)
       bcf_hdr_printf(bcfHeader, "##contig=<ID=%s,length=%d>", p->chrom, 0x7fffffff);   // MAX_CSI_COOR
     }
   kstring_t str = {0,0,0} ;
-  ksprintf(&str, "##pbwtVersion=%d.%d%s%s+htslib-%s", pbwtMajorVersion, pbwtMinorVersion, 
-          strcmp(pbwtCommitHash(),"")==0 ? "" : "-", pbwtCommitHash(), pbwtHtslibVersionString()) ;
+  // ksprintf(&str, "##pbwtVersion=%d.%d%s%s+htslib-%s", pbwtMajorVersion, pbwtMinorVersion, 
+  //         strcmp(pbwtCommitHash(),"")==0 ? "" : "-", pbwtCommitHash(), pbwtHtslibVersionString()) ;
   bcf_hdr_append(bcfHeader, str.s) ;
   str.l = 0;
-  ksprintf(&str, "##pbwtCommand=pbwt %s", commandLine) ;
+  // ksprintf(&str, "##pbwtCommand=pbwt %s", commandLine) ;
   bcf_hdr_append(bcfHeader, str.s) ;
   free(str.s) ;
   bcf_hdr_append(bcfHeader, "##INFO=<ID=AC,Number=A,Type=Integer,Description=\"Allele count in genotypes\">") ;
@@ -392,7 +392,7 @@ void pbwtWriteVcf (PBWT *p, char *filename, char *referenceFasta, char *mode)
   bcf_destroy1(bcfRecord);
   hts_close(fp) ;
 
-  fprintf (logFile, "written vcf file: %d records and %d samples\n", p->N, p->M/2) ;
+  // fprintf (logFile, "written vcf file: %d records and %d samples\n", p->N, p->M/2) ;
 }
 
 /******* end of file ********/

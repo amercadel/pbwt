@@ -53,7 +53,7 @@ void pbwtWrite (PBWT *p, FILE *fp) /* just writes compressed pbwt in yz */
   if (fwrite (arrp(p->yz, 0, uchar), sizeof(uchar), arrayMax(p->yz), fp) != arrayMax(p->yz))
     die ("error writing data in pbwtWrite") ;
 
-  fprintf (logFile, "written %ld chars pbwt: M, N are %d, %d\n", arrayMax(p->yz), p->M, p->N) ;
+  // fprintf (logFile, "written %ld chars pbwt: M, N are %d, %d\n", arrayMax(p->yz), p->M, p->N) ;
 }
 
 void pbwtWriteSites (PBWT *p, FILE *fp)
@@ -72,8 +72,8 @@ void pbwtWriteSites (PBWT *p, FILE *fp)
     }
   if (ferror (fp)) die ("error writing sites file") ;
 
-  fprintf (logFile, "written %d sites from %d to %d\n", p->N, 
-	   arrp(p->sites, 0, Site)->x, arrp(p->sites, p->N-1, Site)->x) ;
+  // fprintf (logFile, "written %d sites from %d to %d\n", p->N, 
+	//    arrp(p->sites, 0, Site)->x, arrp(p->sites, p->N-1, Site)->x) ;
 }
 
 void pbwtWriteSamples (PBWT *p, FILE *fp)
@@ -91,7 +91,7 @@ void pbwtWriteSamples (PBWT *p, FILE *fp)
     }     
   if (ferror (fp)) die ("error writing samples file") ;
 
-  fprintf (logFile, "written %d samples\n", p->M/2) ;
+  // fprintf (logFile, "written %d samples\n", p->M/2) ;
 }
 
 void writeDataOffset (FILE *fp, char *name, Array data, Array offset, int N)
@@ -108,7 +108,7 @@ void writeDataOffset (FILE *fp, char *name, Array data, Array offset, int N)
   if (fwrite (arrp(offset, 0, long), sizeof(long), N, fp) != N)
     die ("error writing offsets in write %s", name) ;
 
-  fprintf (logFile, "written %ld chars compressed %s data\n", n, name) ;
+  // fprintf (logFile, "written %ld chars compressed %s data\n", n, name) ;
 }
 
 void pbwtWriteMissing (PBWT *p, FILE *fp)
@@ -125,7 +125,7 @@ void pbwtWriteReverse (PBWT *p, FILE *fp)
   int* tstart = p->aFstart ; p->aFstart = p->aRstart ;
   int* tend = p->aFend ; p->aFend = p->aRend ;
 
-  fprintf (logFile, "reverse: ") ; pbwtWrite (p, fp) ;
+  // fprintf (logFile, "reverse: ") ; pbwtWrite (p, fp) ;
   
   p->yz = tz ; p->aFstart = tstart ; p->aFend = tend ;
 }
@@ -212,7 +212,7 @@ PBWT *pbwtRead (FILE *fp)
   if (fread (arrp(p->yz, 0, uchar), sizeof(uchar), nz, fp) != nz)
     die ("error reading data in pbwt file") ;
 
-  fprintf (logFile, "read pbwt %s file with %ld bytes: M, N are %d, %d\n", tag, nz, p->M, p->N) ;
+  // fprintf (logFile, "read pbwt %s file with %ld bytes: M, N are %d, %d\n", tag, nz, p->M, p->N) ;
   return p ;
 }
 
@@ -260,7 +260,7 @@ Array pbwtReadSitesFile (FILE *fp, char **chrom)
 
   if (ferror (fp)) die ("error reading sites file") ;
   
-  fprintf (logFile, "read %ld sites on chromosome %s from file\n", arrayMax(sites), *chrom) ;
+  // fprintf (logFile, "read %ld sites on chromosome %s from file\n", arrayMax(sites), *chrom) ;
 
   arrayDestroy (varTextArray) ;
   return sites ;
@@ -336,7 +336,7 @@ Array pbwtReadSamplesFile (FILE *fp) /* for now assume all samples diploid */
     }
   arrayDestroy (nameArray) ;
 
-  fprintf (logFile, "read %ld sample names\n", arrayMax(samples)) ;
+  // fprintf (logFile, "read %ld sample names\n", arrayMax(samples)) ;
 
   return samples ;
 }
@@ -370,7 +370,7 @@ static void readDataOffset (FILE *fp, char *name, Array *data, Array *offset, in
   if (fread (arrp(*data, 0, uchar), sizeof(uchar), n, fp) != n)
     die ("error reading z%s in pbwtRead%s", name, name) ;
   arrayMax(*data) = n ;
-  fprintf (logFile, "read %ld chars compressed %s data\n", n, name) ;
+  // fprintf (logFile, "read %ld chars compressed %s data\n", n, name) ;
 
   *offset = arrayReCreate (*offset, N, long) ;
   if (dummy != -1)		/* old version with ints not longs */
@@ -482,9 +482,9 @@ PBWT *pbwtReadMacs (FILE *fp)
     }
   pbwtCursorToAFend (u, p) ;
 
-  fprintf (logFile, "read MaCS file: M, N are\t%d\t%d\n", M, p->N) ;
-  if (isStats)
-    fprintf (logFile, "                xtot, ytot are\t%d\t%d\n", nxTot, nyTot) ;
+  // fprintf (logFile, "read MaCS file: M, N are\t%d\t%d\n", M, p->N) ;
+  // if (isStats)
+  //   fprintf (logFile, "                xtot, ytot are\t%d\t%d\n", nxTot, nyTot) ;
 
   free(x) ; pbwtCursorDestroy (u) ;
 
@@ -576,9 +576,9 @@ static PBWT *pbwtReadLineFile (FILE *fp, char* type, ParseLineFunc parseLine)
     }
   pbwtCursorToAFend (u, p) ;
 
-  fprintf (logFile, "read %s file", type) ;
-  if (p->chrom) fprintf (logFile, " for chromosome %s", p->chrom) ;
-  fprintf (logFile, ": M, N are\t%d\t%d; yz length is %ld\n", p->M, p->N, arrayMax(p->yz)) ;
+  // fprintf (logFile, "read %s file", type) ;
+  // if (p->chrom) fprintf (logFile, " for chromosome %s", p->chrom) ;
+  // fprintf (logFile, ": M, N are\t%d\t%d; yz length is %ld\n", p->M, p->N, arrayMax(p->yz)) ;
 
   arrayDestroy(xArray) ; pbwtCursorDestroy (u) ;
 
@@ -756,7 +756,7 @@ PBWT *pbwtReadGen (FILE *fp, char *chrom)
   nGenMissing = 0 ;
   PBWT *p = pbwtReadLineFile (fp, "gen", parseGenLine) ;
   p->chrom = strdup (chrom) ;
-  if (nGenMissing) fprintf (logFile, "%ld missing genotypes set to 00\n", nGenMissing) ;
+  // if (nGenMissing) fprintf (logFile, "%ld missing genotypes set to 00\n", nGenMissing) ;
   return p ;
 }
 
@@ -794,7 +794,7 @@ PBWT *pbwtReadPhase (FILE *fp,char *chrom) /* Li and Stephens PHASE format */
     fgetword (fp); /* Remove the initial P */
     version=1;
   }
-  fprintf(logFile,"Reading %i SNPs %i haplotypes and %i individuals from PHASE format version %i\n",nsnps,nhaps,ninds,version);
+  // fprintf(logFile,"Reading %i SNPs %i haplotypes and %i individuals from PHASE format version %i\n",nsnps,nhaps,ninds,version);
   PBWT *p = pbwtCreate (nhaps, nsnps) ;
   p->chrom = strdup (chrom) ;
   p->sites = arrayCreate (4096, Site) ;
@@ -825,9 +825,9 @@ PBWT *pbwtReadPhase (FILE *fp,char *chrom) /* Li and Stephens PHASE format */
     }
   pbwtCursorToAFend (u, p) ;
 
-  fprintf (logFile, "read phase file") ;
-  if (p->chrom) fprintf (logFile, " for chromosome %s", p->chrom) ;
-  fprintf (logFile, ": M, N are\t%d\t%d; yz length is %ld\n", p->M, p->N, arrayMax(p->yz)) ;
+  // fprintf (logFile, "read phase file") ;
+  // if (p->chrom) fprintf (logFile, " for chromosome %s", p->chrom) ;
+  // fprintf (logFile, ": M, N are\t%d\t%d; yz length is %ld\n", p->M, p->N, arrayMax(p->yz)) ;
 
   for (i = 0 ; i < p->N ; ++i) free(data[i]) ;
   free (data) ; pbwtCursorDestroy (u) ;
@@ -853,7 +853,7 @@ void pbwtWriteHaplotypes (FILE *fp, PBWT *p)
     }
   free (hap) ; pbwtCursorDestroy (u) ;
 
-  fprintf (logFile, "written haplotype file: %d rows of %d\n", p->N, M) ;
+  // fprintf (logFile, "written haplotype file: %d rows of %d\n", p->N, M) ;
 }
 
 void pbwtWriteTransposedHaplotypes (PBWT *p, FILE *fp)
@@ -869,7 +869,7 @@ void pbwtWriteTransposedHaplotypes (PBWT *p, FILE *fp)
   
   for (i = 0 ; j < p->M ; ++j) free(hap[j]) ;  free (hap) ;
   
-  fprintf (logFile, "written transposed haplotype file: %d rows of %d\n", p->M,p->N) ;
+  // fprintf (logFile, "written transposed haplotype file: %d rows of %d\n", p->M,p->N) ;
 }
 
 /*************** write IMPUTE files ********************/

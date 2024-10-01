@@ -98,7 +98,7 @@ PBWT *pbwtSubSites (PBWT *pOld, double fmin, double frac)
     }
   pbwtCursorToAFend (uNew, pNew) ;
 
-  fprintf (logFile, "subsites with fmin %f, frac %f leaves %d sites\n", fmin, frac, pNew->N) ;
+  // fprintf (logFile, "subsites with fmin %f, frac %f leaves %d sites\n", fmin, frac, pNew->N) ;
 
   pNew->chrom = pOld->chrom ; pOld->chrom = 0 ;
   pNew->samples = pOld->samples ; pOld->samples = 0 ;
@@ -176,7 +176,7 @@ void pbwtBuildReverse (PBWT *p)
   /* save uR->a, which is the lexicographic order of the sequences */
   if (!p->aRend) p->aRend = myalloc (M, int) ; memcpy (p->aRend, uR->a, M * sizeof(int)) ;
 
-  fprintf (logFile, "built reverse PBWT - size %ld\n", arrayMax(p->zz)) ;
+  // fprintf (logFile, "built reverse PBWT - size %ld\n", arrayMax(p->zz)) ;
 
   if (isCheck)			/* print out the reversed haplotypes */
     { FILE *fp = fopen ("rev.haps","w") ;
@@ -659,8 +659,8 @@ static PBWT *selectSitesLocal (PBWT *pOld, Array sites, BOOL isKeepOld, BOOL isF
     }
   pbwtCursorToAFend (uNew, pNew) ;
 
-  fprintf (logFile, "%d sites selected from %d, pbwt size for %d haplotypes is %ld\n", 
-	   pNew->N, pOld->N, pNew->M, arrayMax(pNew->yz)) ;
+  // fprintf (logFile, "%d sites selected from %d, pbwt size for %d haplotypes is %ld\n", 
+	//    pNew->N, pOld->N, pNew->M, arrayMax(pNew->yz)) ;
 
   if (isKeepOld)
     { if (pOld->samples) pNew->samples = arrayCopy (pOld->samples) ;
@@ -723,8 +723,8 @@ PBWT *pbwtRemoveSites (PBWT *pOld, Array sites, BOOL isKeepOld)
     }
   pbwtCursorToAFend (uNew, pNew) ;
 
-  fprintf (logFile, "%d sites selected from %d, pbwt size for %d haplotypes is %ld\n", 
-	   pNew->N, pOld->N, pNew->M, arrayMax(pNew->yz)) ;
+  // fprintf (logFile, "%d sites selected from %d, pbwt size for %d haplotypes is %ld\n", 
+	//    pNew->N, pOld->N, pNew->M, arrayMax(pNew->yz)) ;
 
   if (isKeepOld)
     { if (pOld->samples) pNew->samples = arrayCopy (pOld->samples) ;
