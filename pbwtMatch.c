@@ -92,7 +92,7 @@ static void matchLongWithin2 (PBWT *p, int T,
   for (k = 0 ; k <= p->N ; ++k)
     { for (i = 0 ; i < u->M ; ++i)
 	{ if (u->d[i] > k-T)
-	    { if (na && nb)		/* then there is something to report */
+	    { if (na && nb || k == p->N-1)		/* then there is something to report */
 		for (ia = i0 ; ia < i ; ++ia)
 		  for (ib = ia+1, dmin = 0 ; ib < i ; ++ib)
 		    { if (u->d[ib] > dmin) dmin = u->d[ib] ;
@@ -106,6 +106,18 @@ static void matchLongWithin2 (PBWT *p, int T,
 	  else
 	    nb++ ;
 	}
+
+	for (ia = i0 ; ia < u->M ; ++ia)
+		for (ib = ia+1, dmin = 0 ; ib < i ; ++ib)
+		{ if (u->d[ib] > dmin) dmin = u->d[ib] ;
+		if (u->y[ib] != u->y[ia] && k <= p->N -1 ){
+			(*report) (u->a[ia], u->a[ib], dmin, k) ;
+		}
+		else if (k  >= p->N -1 ){
+			(*report) (u->a[ia], u->a[ib], dmin, k) ;
+		}
+		}
+
       pbwtCursorForwardsReadAD (u, k) ;
     }
 
