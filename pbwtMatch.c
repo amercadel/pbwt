@@ -129,7 +129,11 @@ void matchMaximalWithin (PBWT *p, void (*report)(int ai, int bi, int start, int 
 {
   int i, j, k, m, n ;
   PbwtCursor *u = pbwtCursorCreate (p, TRUE, TRUE) ;
-
+  FILE *file = fopen("intermediate_matches_native.txt", "w");
+  if (file == NULL) {
+      perror("Error opening file");
+  }
+  
   for (k = 0 ; k <= p->N ; ++k)
     { for (i = 0 ; i < u->M ; ++i)
 	{ m = i-1 ; n = i+1 ;
@@ -142,8 +146,12 @@ void matchMaximalWithin (PBWT *p, void (*report)(int ai, int bi, int start, int 
 	  if (matchLengthHist)
 	    ++array(matchLengthHist, (u->d[i]<u->d[i+1]) ? k-u->d[i] : k-u->d[i+1], int) ;
 	  else
-	    { for (j = m+1 ; j < i ; ++j) (*report) (u->a[i], u->a[j], u->d[i], k) ;
-	      for (j = i+1 ; j < n ; ++j) (*report) (u->a[i], u->a[j], u->d[i+1], k) ;
+	    { for (j = m+1 ; j < i ; ++j) {
+        // (*report) (u->a[i], u->a[j], u->d[i], k);
+        fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i], k, k - u->d[i]);} 
+	      for (j = i+1 ; j < n ; ++j) {
+          // (*report) (u->a[i], u->a[j], u->d[i+1], k) ;
+          fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i+1], k, k-u->d[i+1]);}
 	    }
 	nexti: ;
 	}
