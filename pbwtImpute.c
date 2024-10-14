@@ -1138,12 +1138,12 @@ static PBWT *referenceImpute3 (PBWT *pOld, PBWT *pRef, PBWT *pFrame,
   /* build the array of maximal matches into pFrame for each sequence in pOld */
   maxMatch = myalloc (pOld->M, Array) ;
   for (j = 0 ; j < pOld->M ; ++j) maxMatch[j] = arrayCreate (1024, MatchSegment) ;
-  if (pOld == pFrame)		/* self-imputing - no sparse option yet */
-    matchMaximalWithin (pFrame, reportMatch) ;
-  else
-    /*    matchSequencesSweepSparse (pFrame, pOld, nSparse, reportMatchSparse) ; */
-    /* RD 171113 - I don't underestand this - it disables the effect of nSparse - maybe that doesn't work? */
-      matchSequencesSweep (pFrame, pOld, reportMatch) ;
+  // if (pOld == pFrame)		/* self-imputing - no sparse option yet */
+  //   matchMaximalWithin (pFrame, reportMatch) ;
+  // else
+  //   /*    matchSequencesSweepSparse (pFrame, pOld, nSparse, reportMatchSparse) ; */
+  //   /* RD 171113 - I don't underestand this - it disables the effect of nSparse - maybe that doesn't work? */
+  //     matchSequencesSweep (pFrame, pOld, reportMatch) ;
 
 
   for (j = 0 ; j < pOld->M ; ++j)	/* add terminating element to arrays */

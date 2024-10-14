@@ -124,14 +124,16 @@ static void matchLongWithin2 (PBWT *p, int T,
   pbwtCursorDestroy (u) ;
 }
 
-void matchMaximalWithin (PBWT *p, void (*report)(int ai, int bi, int start, int end))
+void matchMaximalWithin (PBWT *p, int index, void (*report)(int ai, int bi, int start, int end))
 /* algorithm 4 in paper */
 {
   int i, j, k, m, n ;
   PbwtCursor *u = pbwtCursorCreate (p, TRUE, TRUE) ;
-  FILE *file = fopen("intermediate_matches_native.txt", "w");
+  char filename[256];
+  snprintf(filename, sizeof(filename), "intermediate_matches_%d.txt", index);
+  FILE *file = fopen(filename, "w");
   if (file == NULL) {
-      perror("Error opening file");
+    perror("Error opening file");
   }
   
   for (k = 0 ; k <= p->N ; ++k)
@@ -148,10 +150,12 @@ void matchMaximalWithin (PBWT *p, void (*report)(int ai, int bi, int start, int 
 	  else
 	    { for (j = m+1 ; j < i ; ++j) {
         // (*report) (u->a[i], u->a[j], u->d[i], k);
-        fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i], k, k - u->d[i]);} 
+        if(u->a[j] != u->a[i]){
+        fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i], k, k - u->d[i]);}} 
 	      for (j = i+1 ; j < n ; ++j) {
           // (*report) (u->a[i], u->a[j], u->d[i+1], k) ;
-          fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i+1], k, k-u->d[i+1]);}
+          if(u->a[j] != u->a[i]){
+          fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[i], u->a[j], u->d[i+1], k, k-u->d[i+1]);}}
 	    }
 	nexti: ;
 	}
@@ -159,13 +163,14 @@ void matchMaximalWithin (PBWT *p, void (*report)(int ai, int bi, int start, int 
     }
 
   pbwtCursorDestroy (u) ;
+  fclose(file);
 }
 
 /* I think there is a good alternative, where I just go down through the list, keeping
    track of some things, but it is not worked out yet, let alone implemented.
 */
 
-void pbwtLongMatches (PBWT *p, int L) /* reporting threshold L - if 0 then maximal */
+void pbwtLongMatches (PBWT *p, int L, int index) /* reporting threshold L - if 0 then maximal */
 {
   int k ;
   PbwtCursor *u = pbwtCursorCreate (p, TRUE, TRUE) ;
@@ -181,7 +186,7 @@ void pbwtLongMatches (PBWT *p, int L) /* reporting threshold L - if 0 then maxim
   if (L)
     matchLongWithin2 (p, L, reportMatch) ;
   else
-    matchMaximalWithin (p, reportMatch) ;
+    matchMaximalWithin (p, index, reportMatch) ;
 
   if (isStats)
     { int i, nTot = 0 ;
