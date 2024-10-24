@@ -130,6 +130,7 @@ static void matchLongWithin2 (PBWT *p, int T, int index,
     }
 
   pbwtCursorDestroy (u) ;
+  fclose(file);
 }
 
 void matchMaximalWithin (PBWT *p, int index, void (*report)(int ai, int bi, int start, int end))
