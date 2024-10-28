@@ -101,7 +101,7 @@ static void matchLongWithin2 (PBWT *p, int T, int index,
 		for (ia = i0 ; ia < i ; ++ia)
 		  for (ib = ia+1, dmin = 0 ; ib < i ; ++ib)
 		    { if (u->d[ib] > dmin) dmin = u->d[ib] ;
-		      if (u->y[ib] != u->y[ia])
+		      if ((k  >= p->N -1) || (u->y[ib] != u->y[ia]))
 			// (*report) (u->a[ia], u->a[ib], dmin, k) ;
       fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
 		    }
