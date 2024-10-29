@@ -206,7 +206,7 @@ void pbwtWriteVcf (PBWT *p, char *filename, char *reference_fname, char *mode) ;
 /* pbwtMatch.c - functions as in Bioinformatics 2014 paper */
 
 void matchMaximalWithin (PBWT *p, int index, void (*report)(int, int, int, int)) ;
-void pbwtLongMatches (PBWT *p, int L, int index) ; /* internal matches longer than L, maximal if L=0 */
+int* pbwtLongMatches (PBWT *p, int L, int index) ; /* internal matches longer than L, maximal if L=0 */
 void matchSequencesNaive (PBWT *p, FILE *fp) ; /* fp is a pbwt file of sequences to match */
 void matchSequencesIndexed (PBWT *p, FILE *fp) ;
 void matchSequencesDynamic (PBWT *p, FILE *fp) ;

@@ -82,17 +82,19 @@ static void matchLongWithin1 (PBWT *p, int T,
   free(a) ; free(b) ;  pbwtCursorDestroy (u) ;
 }
 
-static void matchLongWithin2 (PBWT *p, int T, int index, 
+int* matchLongWithin2 (PBWT *p, int T, int index,
 			      void (*report)(int ai, int bi, int start, int end))
 /* alternative giving start - it turns out in tests that this is also faster, so use it */
 {
   int i, i0 = 0, ia, ib, na = 0, nb = 0, dmin, k ;
   PbwtCursor *u = pbwtCursorCreate (p, TRUE, TRUE) ;
-  char filename[256];
-  snprintf(filename, sizeof(filename), "intermediate_matches_%d.txt", index);
-  FILE *file = fopen(filename, "w");
-  if (file == NULL) {
-    perror("Error opening file");
+  int* match_array = NULL;
+  int capacity = 1 << 20;
+  match_array = malloc(capacity * sizeof(int));
+  int counter = 0;
+  if(match_array == NULL){
+    perror("Error allocating memoery for match_array at line 93 of pbwtMatch.c");
+    return NULL;
   }
   for (k = 0 ; k <= p->N ; ++k)
     { for (i = 0 ; i < u->M ; ++i)
@@ -101,9 +103,28 @@ static void matchLongWithin2 (PBWT *p, int T, int index,
 		for (ia = i0 ; ia < i ; ++ia)
 		  for (ib = ia+1, dmin = 0 ; ib < i ; ++ib)
 		    { if (u->d[ib] > dmin) dmin = u->d[ib] ;
-		      if ((k  >= p->N -1) || (u->y[ib] != u->y[ia]))
+		      if ((k  >= p->N -1) || (u->y[ib] != u->y[ia])){
 			// (*report) (u->a[ia], u->a[ib], dmin, k) ;
-      fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      // fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      if(counter >= capacity){
+        capacity *= 2;
+        int* tmp = realloc(match_array, capacity * sizeof(int) + 5);
+        if (tmp == NULL){
+          perror("Memory reallocation error at line 113 of pbwtMatch.c");
+          return NULL;
+        }
+        match_array = tmp;
+      }
+      match_array[counter] = u->a[ia];
+      counter++;
+      match_array[counter] = u->a[ib];
+      counter++;
+      match_array[counter] = dmin;
+      counter++;
+      match_array[counter] = k;
+      counter++;
+      
+          }
 		    }
 	      na = 0 ; nb = 0 ; i0 = i ;
 	    }
@@ -118,19 +139,53 @@ static void matchLongWithin2 (PBWT *p, int T, int index,
 		{ if (u->d[ib] > dmin) dmin = u->d[ib] ;
 		if (u->y[ib] != u->y[ia] && k <= p->N -1 ){
 			// (*report) (u->a[ia], u->a[ib], dmin, k) ;
-      fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      // fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      if(counter >= capacity){
+        capacity *= 2;
+        int* tmp = realloc(match_array, capacity * sizeof(int) + 5);
+        if (tmp == NULL){
+          perror("Memory reallocation error at line 113 of pbwtMatch.c");
+          return NULL;
+        }
+        match_array = tmp;
+      }
+      match_array[counter] = u->a[ia];
+      counter++;
+      match_array[counter] = u->a[ib];
+      counter++;
+      match_array[counter] = dmin;
+      counter++;
+      match_array[counter] = k;
+      counter++;
 		}
 		else if (k  >= p->N -1 ){
 			// (*report) (u->a[ia], u->a[ib], dmin, k) ;
-      fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      // fprintf(file, "MATCH\t%d\t%d\t%d\t%d\t%d\n", u->a[ia], u->a[ib], dmin, k, k - dmin);
+      if(counter >= capacity){
+        capacity *= 2;
+        int* tmp = realloc(match_array, capacity * sizeof(int) + 5);
+        if (tmp == NULL){
+          perror("Memory reallocation error at line 113 of pbwtMatch.c");
+          return NULL;
+        }
+        match_array = tmp;
+      }
+      match_array[counter] = u->a[ia];
+      counter++;
+      match_array[counter] = u->a[ib];
+      counter++;
+      match_array[counter] = dmin;
+      counter++;
+      match_array[counter] = k;
+      counter++;
 		}
 		}
-
       pbwtCursorForwardsReadAD (u, k) ;
     }
 
   pbwtCursorDestroy (u) ;
-  fclose(file);
+  match_array[counter] = -1;
+  return match_array;
 }
 
 void matchMaximalWithin (PBWT *p, int index, void (*report)(int ai, int bi, int start, int end))
@@ -179,11 +234,11 @@ void matchMaximalWithin (PBWT *p, int index, void (*report)(int ai, int bi, int 
    track of some things, but it is not worked out yet, let alone implemented.
 */
 
-void pbwtLongMatches (PBWT *p, int L, int index) /* reporting threshold L - if 0 then maximal */
+int* pbwtLongMatches (PBWT *p, int L, int index) /* reporting threshold L - if 0 then maximal */
 {
   int k ;
   PbwtCursor *u = pbwtCursorCreate (p, TRUE, TRUE) ;
-
+  int* ret;
   if (!p || !p->yz) die ("option -longWithin called without a PBWT") ;
   if (L < 0) die ("L %d for longWithin must be >= 0", L) ;
 
@@ -193,7 +248,7 @@ void pbwtLongMatches (PBWT *p, int L, int index) /* reporting threshold L - if 0
     matchLengthHist = arrayReCreate (matchLengthHist, 1000000, int) ;
 
   if (L)
-    matchLongWithin2 (p, L, index, reportMatch) ;
+    ret = matchLongWithin2 (p, L, index, reportMatch) ;
   else
     matchMaximalWithin (p, index, reportMatch) ;
 
@@ -214,6 +269,7 @@ void pbwtLongMatches (PBWT *p, int L, int index) /* reporting threshold L - if 0
   pbwtCursorDestroy (u) ;
   if (isCheck) 
     { int j ; for (j = 0 ; j < p->M ; ++j) free (checkHapsA[j]) ; free (checkHapsA) ; }
+  return ret;
 }
 
 /***************** match new sequences into a reference PBWT ******************/
