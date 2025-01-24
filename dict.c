@@ -86,9 +86,7 @@ void dictDestroy (DICT *dict)
 
 /*****************************/
 
-static int newPos ;		/* communication between dictFind() and dictAdd() */
-
-int dictFind (DICT *dict, char *s, int *ip)
+int dictFind (DICT *dict, char *s, int *ip, int *newPos)
 {
   int i, x, d ;
 
@@ -97,7 +95,7 @@ int dictFind (DICT *dict, char *s, int *ip)
 
   x = hashString (s, dict->dim, 0) ;
   if (!(i = dict->table[x]))
-    { newPos = x ; 
+    { if (newPos) *newPos = x ; 
       return 0 ; 
     }
   else if (!strcmp (s, dict->names[i]))
@@ -109,7 +107,7 @@ int dictFind (DICT *dict, char *s, int *ip)
       while (1)
 	{ x = (x + d) & ((1 << dict->dim) - 1) ;
 	  if (!(i = dict->table[x]))
-	    { newPos = x ; 
+	    { if (newPos) *newPos = x ; 
 	      return 0 ; 
 	    }
 	  else if (!strcmp (s, dict->names[i]))
@@ -124,9 +122,9 @@ int dictFind (DICT *dict, char *s, int *ip)
 
 int dictAdd (DICT *dict, char *s, int *ip)
 {
-  int i, x ;
+  int i, x, newPos ;
 
-  if (dictFind (dict, s, ip)) return 0 ;
+  if (dictFind (dict, s, ip, &newPos)) return 0 ;
 
   i = ++dict->max ;
   dict->table[newPos] = i ;

@@ -40,7 +40,7 @@ typedef struct {
 DICT *dictCreate (int size) ;
 void dictDestroy (DICT *dict) ;
 int dictAdd (DICT *dict, char* string, int *index) ;
-int dictFind (DICT *dict, char *string, int *index) ;
+int dictFind (DICT *dict, char *string, int *index, int *newPos) ;
 char* dictName (DICT *dict, int i) ;
 
 #define dictMax(dict)  ((dict)->max)
