@@ -206,7 +206,7 @@ char *uArrayBlock (Array a, long i, long n)
         * if not, returns FALSE and sets *ip one step left
         */
 
-BOOL arrayFind(Array a, void *s, long *ip, ArrayOrder *order)
+bool arrayFind(Array a, void *s, long *ip, ArrayOrder *order)
 {
   int ord ;
   long i = 0 , j, k ;
@@ -256,7 +256,7 @@ BOOL arrayFind(Array a, void *s, long *ip, ArrayOrder *order)
         * sorted in ascending order of order()
         */
 
-BOOL arrayRemove (Array a, void * s, ArrayOrder *order)
+bool arrayRemove (Array a, void * s, ArrayOrder *order)
 {
   long i;
 
@@ -277,7 +277,7 @@ BOOL arrayRemove (Array a, void * s, ArrayOrder *order)
         * in ascending order of s.begin
         */
 
-BOOL arrayInsert (Array a, void *s, ArrayOrder *order)
+bool arrayInsert (Array a, void *s, ArrayOrder *order)
 {
   long i ;
 
