@@ -33,7 +33,7 @@
 
 #ifndef ARRAY_DEFINED
 #define ARRAY_DEFINED
-
+#include "stdbool.h"
 /* #define ARRAY_CHECK either here or in a single file to
    check the bounds on arr() and arrp() calls
    if defined here can remove from specific C files by defining ARRAY_NO_CHECK
